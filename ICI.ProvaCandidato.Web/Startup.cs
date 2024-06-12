@@ -1,4 +1,5 @@
 using ICI.ProvaCandidato.Dados.Data;
+using ICI.ProvaCandidato.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,8 @@ namespace ICI.ProvaCandidato.Web
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			DatabaseService.Initialize(app);
+
 			app.UseDeveloperExceptionPage();
 
 			app.UseHttpsRedirection();
