@@ -30,7 +30,8 @@ namespace ICI.ProvaCandidato.Web
 
 			services.AddDbContext<ApplicationDbContext>(options =>
 			{
-                options.UseSqlServer(connectionString);
+				//options.UseSqlServer(connectionString);
+				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
 			services.AddControllersWithViews();
