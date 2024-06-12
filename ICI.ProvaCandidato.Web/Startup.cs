@@ -1,4 +1,4 @@
-using ICI.ProvaCandidato.Dados.Data;
+using ICI.ProvaCandidato.Dados;
 using ICI.ProvaCandidato.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

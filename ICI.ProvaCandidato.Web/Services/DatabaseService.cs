@@ -1,4 +1,4 @@
-﻿using ICI.ProvaCandidato.Dados.Data;
+﻿using ICI.ProvaCandidato.Dados;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
