@@ -1,5 +1,5 @@
 ﻿using ICI.ProvaCandidato.Dados;
-using ICI.ProvaCandidato.Dados.Data;
+using ICI.ProvaCandidato.Negocio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;

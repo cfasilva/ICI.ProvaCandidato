@@ -1,4 +1,4 @@
-﻿namespace ICI.ProvaCandidato.Dados
+﻿namespace ICI.ProvaCandidato.Negocio
 {
     public class Tag
     {
