@@ -2,6 +2,7 @@
 using ICI.ProvaCandidato.Negocio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,9 +18,19 @@ namespace ICI.ProvaCandidato.Web.Controllers
         }
 
         // GET: Tags
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Tags.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var tags = from t in _context.Tags
+                       select t;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                tags = tags.Where(s => s.Description.Contains(searchString));
+            }
+
+            return View(await tags.ToListAsync());
         }
 
         // GET: Tags/Details/5
@@ -137,6 +148,14 @@ namespace ICI.ProvaCandidato.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tag = await _context.Tags.FindAsync(id);
+
+            var hasNews = _context.TagNews.Any(nt => nt.TagId == id);
+            if (hasNews)
+            {
+                ModelState.AddModelError(string.Empty, "Could not delete. The tag is linked to a news.");
+                return View(tag);
+            }
+
             _context.Tags.Remove(tag);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
