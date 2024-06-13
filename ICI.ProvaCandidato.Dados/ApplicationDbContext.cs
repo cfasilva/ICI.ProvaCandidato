@@ -9,9 +9,22 @@ namespace ICI.ProvaCandidato.Dados
             : base(options)
         { }
 
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<News> News { get; set; }
-        public DbSet<TagNews> TagNews { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<News> News { get; set; }
+        public virtual DbSet<TagNews> TagNews { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TagNews>()
+                .HasOne(tn => tn.Tag)
+                .WithMany(t => t.TagNews)
+                .HasForeignKey(tn => tn.TagId);
+
+            modelBuilder.Entity<TagNews>()
+                .HasOne(tn => tn.News)
+                .WithMany(n => n.TagNews)
+                .HasForeignKey(tn => tn.NewsId);
+        }
     }
 }
