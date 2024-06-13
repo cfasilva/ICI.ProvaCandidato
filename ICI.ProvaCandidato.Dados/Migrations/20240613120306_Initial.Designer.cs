@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICI.ProvaCandidato.Dados.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240613034031_Initial")]
+    [Migration("20240613120306_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
