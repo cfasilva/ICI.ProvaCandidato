@@ -20,7 +20,11 @@ namespace ICI.ProvaCandidato.Web.Controllers
         // GET: News
         public async Task<IActionResult> Index()
         {
-            var news = _context.News.Include(n => n.User);
+            var news = _context.News
+                .Include(n => n.User)
+                .Include(n => n.TagNews)
+                    .ThenInclude(tn => tn.Tag);
+
             return View(await news.ToListAsync());
         }
 
@@ -34,7 +38,10 @@ namespace ICI.ProvaCandidato.Web.Controllers
 
             var news = await _context.News
                 .Include(n => n.User)
+                .Include(n => n.TagNews)
+                    .ThenInclude(tn => tn.Tag)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (news == null)
             {
                 return NotFound();
@@ -55,15 +62,29 @@ namespace ICI.ProvaCandidato.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Text")] News news)
+        public async Task<IActionResult> Create([Bind("Id,Title,Text,SelectedTagIds")] News news)
         {
             if (ModelState.IsValid)
             {
+                //Define the user logged in
                 news.UserId = 1;
+
                 _context.Add(news);
                 await _context.SaveChangesAsync();
+
+                if (news.SelectedTagIds != null && news.SelectedTagIds.Count > 0)
+                {
+                    foreach (var tagId in news.SelectedTagIds)
+                    {
+                        _context.TagNews.Add(new TagNews { NewsId = news.Id, TagId = tagId });
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Tags = new SelectList(_context.Tags, "Id", "Description");
             return View(news);
         }
 
@@ -81,6 +102,8 @@ namespace ICI.ProvaCandidato.Web.Controllers
                 return NotFound();
             }
 
+            news.SelectedTagIds = _context.TagNews.Where(tn => tn.NewsId == news.Id).Select(tn => tn.TagId).ToList();
+
             ViewBag.Tags = new SelectList(_context.Tags, "Id", "Description");
             return View(news);
         }
@@ -90,7 +113,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Text")] News news)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Text,SelectedTagIds")] News news)
         {
             if (id != news.Id)
             {
@@ -101,7 +124,23 @@ namespace ICI.ProvaCandidato.Web.Controllers
             {
                 try
                 {
+                    //Define the user logged in
+                    news.UserId = 1;
+
                     _context.Update(news);
+                    await _context.SaveChangesAsync();
+
+                    var existingTags = _context.TagNews.Where(tn => tn.NewsId == news.Id);
+                    _context.TagNews.RemoveRange(existingTags);
+
+                    if (news.SelectedTagIds != null && news.SelectedTagIds.Count > 0)
+                    {
+                        foreach (var tagId in news.SelectedTagIds)
+                        {
+                            _context.TagNews.Add(new TagNews { NewsId = news.Id, TagId = tagId });
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -117,6 +156,8 @@ namespace ICI.ProvaCandidato.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Tags = new SelectList(_context.Tags, "Id", "Description");
             return View(news);
         }
 
@@ -130,7 +171,10 @@ namespace ICI.ProvaCandidato.Web.Controllers
 
             var news = await _context.News
                 .Include(n => n.User)
+                .Include(n => n.TagNews)
+                    .ThenInclude(tn => tn.Tag)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (news == null)
             {
                 return NotFound();
