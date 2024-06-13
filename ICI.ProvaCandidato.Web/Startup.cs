@@ -20,19 +20,10 @@ namespace ICI.ProvaCandidato.Web
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			var server = Configuration["DatabaseServer"] ?? "mssql-server";
-			var port = Configuration["DatabasePort"] ?? "1433";
-			var user = Configuration["DatabaseUser"] ?? "sa";
-			var password = Configuration["DatabasePassword"] ?? "Docker2024";
-			var database = Configuration["DatabaseName"] ?? "icidb";
-
-			string connectionString = $"Server={server},{port};Initial Catalog={database};User ID={user};Password={password}";
-
 			services.AddDbContext<ApplicationDbContext>(options =>
 			{
-				//options.UseSqlServer(connectionString);
 				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            });
+			});
 
 			services.AddControllersWithViews();
 		}

@@ -26,12 +26,6 @@ namespace ICI.ProvaCandidato.Web.Services
                 new User { Name = "Admin", Email = "contact@admin.com", Password = "admin123" }
             );
 
-            context.Tags.AddRange(
-                new Tag { Description = "Tag 1" },
-                new Tag { Description = "Tag 2" },
-                new Tag { Description = "Tag 3" }
-            );
-
             context.SaveChanges();
         }
     }
