@@ -1,4 +1,5 @@
 using ICI.ProvaCandidato.Dados;
+using ICI.ProvaCandidato.Negocio.Services;
 using ICI.ProvaCandidato.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,8 @@ namespace ICI.ProvaCandidato.Web
 			{
 				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 			});
+
+			services.AddScoped<TagService>();
 
 			services.AddControllersWithViews();
 		}

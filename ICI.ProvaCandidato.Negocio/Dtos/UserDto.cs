@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ICI.ProvaCandidato.Negocio
+namespace ICI.ProvaCandidato.Negocio.Dtos
 {
-    public class User
+    public class UserDto
     {
         public int Id { get; set; }
 

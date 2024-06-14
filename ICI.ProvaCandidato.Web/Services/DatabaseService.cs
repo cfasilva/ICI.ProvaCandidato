@@ -1,5 +1,5 @@
 ﻿using ICI.ProvaCandidato.Dados;
-using ICI.ProvaCandidato.Negocio;
+using ICI.ProvaCandidato.Dados.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

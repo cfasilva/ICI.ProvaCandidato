@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ICI.ProvaCandidato.Dados.Entities;
 
-namespace ICI.ProvaCandidato.Negocio
+namespace ICI.ProvaCandidato.Negocio.Dtos
 {
-    public class Tag
+    public class TagDto
     {
         public int Id { get; set; }
 
@@ -11,6 +12,6 @@ namespace ICI.ProvaCandidato.Negocio
         [StringLength(100)]
         public string Description { get; set; }
 
-        public ICollection<TagNews> TagNews { get; set; }
+        public ICollection<TagNewsDto> TagNews { get; set; } = new List<TagNewsDto>();
     }
 }

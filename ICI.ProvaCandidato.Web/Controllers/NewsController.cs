@@ -1,5 +1,6 @@
 ﻿using ICI.ProvaCandidato.Dados;
-using ICI.ProvaCandidato.Negocio;
+using ICI.ProvaCandidato.Dados.Entities;
+using ICI.ProvaCandidato.Negocio.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +63,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Text,SelectedTagIds")] News news)
+        public async Task<IActionResult> Create([Bind("Id,Title,Text,SelectedTagIds")] NewsDto news)
         {
             if (ModelState.IsValid)
             {
@@ -102,7 +103,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
                 return NotFound();
             }
 
-            news.SelectedTagIds = _context.TagNews.Where(tn => tn.NewsId == news.Id).Select(tn => tn.TagId).ToList();
+            //TODO: news.SelectedTagIds = _context.TagNews.Where(tn => tn.NewsId == news.Id).Select(tn => tn.TagId).ToList();
 
             ViewBag.Tags = new SelectList(_context.Tags, "Id", "Description");
             return View(news);
@@ -113,7 +114,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Text,SelectedTagIds")] News news)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Text,SelectedTagIds")] NewsDto news)
         {
             if (id != news.Id)
             {

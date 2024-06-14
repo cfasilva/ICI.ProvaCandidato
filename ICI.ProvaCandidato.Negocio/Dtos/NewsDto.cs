@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ICI.ProvaCandidato.Negocio
+namespace ICI.ProvaCandidato.Negocio.Dtos
 {
-    public class News
+    public class NewsDto
     {
         public int Id { get; set; }
 
@@ -17,11 +16,10 @@ namespace ICI.ProvaCandidato.Negocio
 
         public int UserId { get; set; }
 
-        public virtual User User { get; set; }
+        public UserDto User { get; set; }
 
-        public ICollection<TagNews> TagNews { get; set; }
+        public ICollection<TagNewsDto> TagNews { get; set; } = new List<TagNewsDto>();
 
-        [NotMapped]
         public List<int> SelectedTagIds { get; set; }
     }
 }

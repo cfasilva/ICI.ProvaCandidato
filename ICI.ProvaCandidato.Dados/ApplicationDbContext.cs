@@ -1,4 +1,4 @@
-﻿using ICI.ProvaCandidato.Negocio;
+﻿using ICI.ProvaCandidato.Dados.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICI.ProvaCandidato.Dados

@@ -1,20 +1,18 @@
-﻿using ICI.ProvaCandidato.Dados;
-using ICI.ProvaCandidato.Negocio;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
+using ICI.ProvaCandidato.Negocio.Dtos;
+using ICI.ProvaCandidato.Negocio.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ICI.ProvaCandidato.Web.Controllers
 {
     public class TagsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly TagService _service;
 
-        public TagsController(ApplicationDbContext context)
+        public TagsController(TagService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Tags
@@ -22,15 +20,9 @@ namespace ICI.ProvaCandidato.Web.Controllers
         {
             ViewData["CurrentFilter"] = searchString;
 
-            var tags = from t in _context.Tags
-                       select t;
+            var dtos = await _service.List(searchString);
 
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                tags = tags.Where(s => s.Description.Contains(searchString));
-            }
-
-            return View(await tags.ToListAsync());
+            return View(dtos);
         }
 
         // GET: Tags/Details/5
@@ -41,8 +33,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tags
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var tag = await _service.Find(id.Value);
             if (tag == null)
             {
                 return NotFound();
@@ -62,12 +53,11 @@ namespace ICI.ProvaCandidato.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description")] Tag tag)
+        public async Task<IActionResult> Create([Bind("Id,Description")] TagDto tag)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tag);
-                await _context.SaveChangesAsync();
+                await _service.Add(tag);
                 return RedirectToAction(nameof(Index));
             }
             return View(tag);
@@ -81,7 +71,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tags.FindAsync(id);
+            var tag = await _service.Find(id.Value);
             if (tag == null)
             {
                 return NotFound();
@@ -94,7 +84,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] Tag tag)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] TagDto tag)
         {
             if (id != tag.Id)
             {
@@ -103,22 +93,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(tag);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TagExists(tag.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.Update(tag);
                 return RedirectToAction(nameof(Index));
             }
             return View(tag);
@@ -132,8 +107,7 @@ namespace ICI.ProvaCandidato.Web.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tags
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var tag = await _service.Find(id.Value);
             if (tag == null)
             {
                 return NotFound();
@@ -147,23 +121,16 @@ namespace ICI.ProvaCandidato.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tag = await _context.Tags.FindAsync(id);
-
-            var hasNews = _context.TagNews.Any(nt => nt.TagId == id);
-            if (hasNews)
+            try
             {
-                ModelState.AddModelError(string.Empty, "Could not delete. The tag is linked to a news.");
-                return View(tag);
+                await _service.Delete(id);
+                return RedirectToAction(nameof(Index));
             }
-
-            _context.Tags.Remove(tag);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool TagExists(int id)
-        {
-            return _context.Tags.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(await _service.Find(id));
+            }
         }
     }
 }

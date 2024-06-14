@@ -1,4 +1,4 @@
-﻿namespace ICI.ProvaCandidato.Negocio
+﻿namespace ICI.ProvaCandidato.Dados.Entities
 {
     public class TagNews
     {
